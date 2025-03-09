@@ -32,7 +32,7 @@ public class Order {
     @Column(name = "note", length = 100)
     private String note;
     @Column(name = "order_date")
-    private LocalDateTime orderDate;
+    private Date orderDate;
     @Column(name = "status")
     private String status;
     @Column(name = "total_money")

@@ -25,7 +25,7 @@ public class OrderResponse extends BaseResponse{
     @JsonProperty("total_money")
     private Float totalMoney;
     @JsonProperty("order_date")
-    private LocalDateTime orderDate;
+    private Date orderDate;
     private String status;
     @JsonProperty("shipping_method")
     private String shippingMethod;
