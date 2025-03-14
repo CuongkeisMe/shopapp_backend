@@ -31,7 +31,7 @@ public class UserController {
                         .toList();
                 return ResponseEntity.badRequest().body(errorMessages);
             }
-            if(!userDTO.getPassword().equals(userDTO.getRetypePassword())){
+            if(!userDTO.getPass().equals(userDTO.getRetypePass())){
                 return ResponseEntity.badRequest().body("Password does not match");
             }
             userService.createUser(userDTO);

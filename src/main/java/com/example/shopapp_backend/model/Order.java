@@ -3,6 +3,7 @@ package com.example.shopapp_backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -42,15 +43,11 @@ public class Order {
     @Column(name = "shipping_address")
     private String shippingAddress;
     @Column(name = "shipping_date")
-    private Date shippingDate;
+    private LocalDate shippingDate;
     @Column(name = "tracking_number")
     private String trackingNumber;
     @Column(name = "payment_method")
     private String paymentMethod;
-    @Column(name = "payment_status")
-    private String paymentStatus;
-    @Column(name = "payment_date")
-    private Date paymentDate; // khi ng dung thanh toan moi cap nhat
     @Column(name = "active")
     private Boolean active; // chuc nang thuoc ve admin
 }

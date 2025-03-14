@@ -24,9 +24,9 @@ public class UserDTO {
     private String phoneNumber;
     private String address;
     @NotBlank(message = "Password can not be blank")
-    private String password;
+    private String pass;
     @JsonProperty("retype_password")
-    private String retypePassword;
+    private String retypePass;
     @JsonProperty("date_of_birth")
     private Date dateOfBirth;
     @JsonProperty("facebook_account_id")

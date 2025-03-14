@@ -23,9 +23,10 @@ public class User extends BaseEntity{
     private String phoneNumber;
     @Column(name = "address", length = 200)
     private String address;
-    @Column(name = "password", length = 200)
-    private String password;
-    private boolean active;
+    @Column(name = "pass", length = 200)
+    private String pass;
+    @Column(name = "is_active")
+    private boolean isActive;
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
     @Column(name = "facebook_account_id")

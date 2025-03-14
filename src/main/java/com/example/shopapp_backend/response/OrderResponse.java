@@ -3,6 +3,7 @@ package com.example.shopapp_backend.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -32,11 +33,11 @@ public class OrderResponse extends BaseResponse{
     @JsonProperty("shipping_address")
     private String shippingAddress;
     @JsonProperty("shipping_date")
-    private Date shippingDate;
+    private LocalDate shippingDate;
     @JsonProperty("tracking_number")
     private String trackingNumber;
     @JsonProperty("payment_method")
     private String paymentMethod;
-    @JsonProperty("active")
-    private Boolean active;
+    @JsonProperty("is_active")
+    private Boolean isActive;
 }
