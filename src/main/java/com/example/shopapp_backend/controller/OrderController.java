@@ -75,6 +75,11 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable("id") Long id) {
         // xoa mem => Cap nhat truong active tu true -> false
-        return ResponseEntity.ok("delete order successfully");
+        try {
+            orderService.deleteOrder(id);
+            return ResponseEntity.ok("delete order successfully");
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

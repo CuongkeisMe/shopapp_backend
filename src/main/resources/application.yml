@@ -20,3 +20,5 @@ spring:
       max-request-size: 10MB
 api:
   prefix: api/v1
+jwt:
+  expiration: 86400 #1 day (tinh = s)

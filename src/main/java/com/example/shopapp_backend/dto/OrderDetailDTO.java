@@ -10,15 +10,15 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 
-public class OrderDetailsDTO {
+public class OrderDetailDTO {
     @JsonProperty("order_id")
     private Long orderId;
     @JsonProperty("product_id")
     private Long productId;
     private Float price;
-    @JsonProperty("numbers_of_products")
+    @JsonProperty("number_of_products")
     private int numberOfProducts;
     @JsonProperty("total_money")
-    private int totalMoney;
+    private Float totalMoney;
     private String color;
 }
