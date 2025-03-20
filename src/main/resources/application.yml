@@ -22,3 +22,4 @@ api:
   prefix: api/v1
 jwt:
   expiration: 86400 #1 day (tinh = s)
+  secretKey: eGx1av2r69hfhOHhh+LJW4DquNFQzirhahwQWq0N+R4=

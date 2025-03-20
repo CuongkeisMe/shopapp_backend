@@ -24,6 +24,7 @@ public class UserDTO {
     private String phoneNumber;
     private String address;
     @NotBlank(message = "Password can not be blank")
+    @JsonProperty("pass")
     private String pass;
     @JsonProperty("retype_password")
     private String retypePass;
@@ -34,7 +35,7 @@ public class UserDTO {
     @JsonProperty("google_account_id")
     private int googleAccountId;
     @NotNull(message = "Role id is required")
-    @JsonProperty(namespace = "role_id")
+    @JsonProperty("role_id")
     private Long roleId;
 }
 

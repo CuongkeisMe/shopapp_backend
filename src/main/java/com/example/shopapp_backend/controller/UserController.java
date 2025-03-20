@@ -35,7 +35,7 @@ public class UserController {
                 return ResponseEntity.badRequest().body("Password does not match");
             }
             userService.createUser(userDTO);
-            return ResponseEntity.ok("Register successfully");
+            return ResponseEntity.ok(userDTO);
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -43,8 +43,11 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody UserLoginDTO userLoginDTO){
-        // Kiem tra thong tin dang nhap va sinh ra token
-        // Tra ve token trong response
-        return ResponseEntity.ok("Some token");
+        try {
+            String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPass());
+            return ResponseEntity.ok(token);
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
