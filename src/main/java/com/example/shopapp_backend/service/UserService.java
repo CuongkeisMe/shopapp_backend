@@ -3,6 +3,7 @@ package com.example.shopapp_backend.service;
 import com.example.shopapp_backend.components.JwtTokenUtils;
 import com.example.shopapp_backend.dto.UserDTO;
 import com.example.shopapp_backend.exception.DataNotFoundException;
+import com.example.shopapp_backend.exception.PermissionDenyException;
 import com.example.shopapp_backend.model.Role;
 import com.example.shopapp_backend.model.User;
 import com.example.shopapp_backend.repository.RoleRepository;
@@ -34,6 +35,11 @@ public class UserService implements IUserService {
         if (userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new DataIntegrityViolationException("Phone number already exists");
         }
+        Role role = roleRepository.findById(userDTO.getRoleId())
+                .orElseThrow(() -> new DataNotFoundException("Role not found"));
+        if(role.getName().toUpperCase().equals(Role.ADMIN)) {
+            throw new PermissionDenyException("You cannot register ad admin account");
+        }
         // convert tu dto -> object
         User newUser = User.builder()
                 .fullName(userDTO.getFullName())
@@ -44,8 +50,6 @@ public class UserService implements IUserService {
                 .facebookAcountId(userDTO.getFacebookAccountId())
                 .googleAccountId(userDTO.getGoogleAccountId())
                 .build();
-        Role role = roleRepository.findById(userDTO.getRoleId())
-                .orElseThrow(() -> new DataNotFoundException("Role not found"));
         newUser.setRole(role);
         // Kiem tra neu co accountId -> Kh yeu cau nhap pass
         if (userDTO.getGoogleAccountId() == 0 && userDTO.getFacebookAccountId() == 0) {
