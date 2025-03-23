@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,6 +41,8 @@ public class WebSecurityConfiguration {
                                     String.format("%s/users/login", apiPrefix)
                             )
                             .permitAll()
+                            .requestMatchers(GET,
+                                    String.format("%s/roles**", apiPrefix)).permitAll()
 
                             .requestMatchers(GET,
                                     String.format("%s/categories**", apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
@@ -90,6 +91,7 @@ public class WebSecurityConfiguration {
 
                             .requestMatchers(DELETE,
                                     String.format("%s/order_details/**", apiPrefix)).hasRole(Role.ADMIN)
+
                             .anyRequest().authenticated();
                 })
                 // cho phep mo cong http, khi nao dung https se bo

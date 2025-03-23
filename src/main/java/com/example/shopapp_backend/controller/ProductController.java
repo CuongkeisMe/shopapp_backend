@@ -1,5 +1,6 @@
 package com.example.shopapp_backend.controller;
 
+import com.example.shopapp_backend.component.LocalizationUtil;
 import com.example.shopapp_backend.dto.ProductDTO;
 import com.example.shopapp_backend.dto.ProductImageDTO;
 import com.example.shopapp_backend.exception.DataNotFoundException;
@@ -8,6 +9,7 @@ import com.example.shopapp_backend.model.ProductImage;
 import com.example.shopapp_backend.response.ProductListResponse;
 import com.example.shopapp_backend.response.ProductResponse;
 import com.example.shopapp_backend.service.ProductService;
+import com.example.shopapp_backend.util.MessageKey;
 import com.github.javafaker.Faker;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ import java.util.UUID;
 public class ProductController {
 
     private final ProductService productService;
+    private final LocalizationUtil localizationUtil;
 
     @GetMapping("")
     public ResponseEntity<ProductListResponse> getProduct(
@@ -101,7 +104,7 @@ public class ProductController {
             // Lay ra product de them anh
             Product existingProduct = productService.getProductById(productId);
             if (files.length > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT){
-                return ResponseEntity.badRequest().body("You can only upload maximum 5 images !");
+                return ResponseEntity.badRequest().body(localizationUtil.getLocalizedMessage(MessageKey.UPLOAD_IMAGES_MAX_5));
             }
             // khoi tao list anh de add nhieu anh cung luc
             List<ProductImage> productImages = new ArrayList<>();
@@ -112,12 +115,12 @@ public class ProductController {
                 }
                 if (file.getSize() > 10 * 1024 * 1024) { // kich thuoc lon hon 10 mb
                     return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
-                            .body("File is too large! Maximum size is 10MB");
+                            .body(localizationUtil.getLocalizedMessage(MessageKey.UPLOAD_IMAGES_FILE_LARGE));
                 }
                 String contentType = file.getContentType();
                 if (contentType == null || !contentType.startsWith("image/")) {
                     return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-                            .body("File must be an image");
+                            .body(localizationUtil.getLocalizedMessage(MessageKey.UPLOAD_IMAGES_FILE_MUST_BE_IMAGE));
                 }
                 String fileName = this.storeFile(file);
                 ProductImage productImage = productService.createProductImage(existingProduct.getId(),

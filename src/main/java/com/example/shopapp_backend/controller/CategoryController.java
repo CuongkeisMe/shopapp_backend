@@ -27,14 +27,18 @@ public class CategoryController {
     public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDTO categoryDTO,
                                             BindingResult result
     ) {
-        if(result.hasErrors()){
-            List<String> errormessage = result.getFieldErrors().stream()
-                    .map(FieldError::getDefaultMessage)
-                    .toList();
-            return ResponseEntity.badRequest().body(errormessage);
+        try {
+            if(result.hasErrors()){
+                List<String> errormessage = result.getFieldErrors().stream()
+                        .map(FieldError::getDefaultMessage)
+                        .toList();
+                return ResponseEntity.badRequest().body(errormessage);
+            }
+            categoryService.createCategory(categoryDTO);
+            return ResponseEntity.ok().body(localizationUtil.getLocalizedMessage(MessageKey.INSERT_CATEGORY_SUCCESSFULLY));
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(localizationUtil.getLocalizedMessage(MessageKey.INSERT_CATEGORY_FAILED, e.getMessage()));
         }
-        categoryService.createCategory(categoryDTO);
-        return ResponseEntity.ok().body(localizationUtil.getLocalizedMessage(MessageKey.INSERT_CATEGORY_SUCCESSFULLY));
     }
 
     // Hien thi tat ca cac category
@@ -53,7 +57,7 @@ public class CategoryController {
     public ResponseEntity<String> updateCategory(@PathVariable Long id,
                                                  @Valid @RequestBody CategoryDTO categoryDTO) {
         categoryService.updateCategory(id, categoryDTO);
-        return ResponseEntity.ok("Update category successfully");
+        return ResponseEntity.ok().body(localizationUtil.getLocalizedMessage(MessageKey.UPDATE_CATEGORY_SUCCESSFULLY));
     }
 
     @DeleteMapping("/{id}")

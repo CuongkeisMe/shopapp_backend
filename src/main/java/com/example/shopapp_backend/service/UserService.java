@@ -61,7 +61,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public String login(String phoneNumber, String password) throws DataNotFoundException {
+    public String login(String phoneNumber, String password, Long roleId) throws DataNotFoundException {
         Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
         if (optionalUser.isEmpty()) {
             throw new DataNotFoundException("Invalid phone number or password");
@@ -73,6 +73,10 @@ public class UserService implements IUserService {
             if (!passwordEncoder.matches(password, existingUser.getPass())) {
                 throw new BadCredentialsException("Wrong phone number or password");
             }
+        }
+        Optional<Role> optionalRole = roleRepository.findById(roleId);
+        if(optionalRole.isEmpty() || !roleId.equals(existingUser.getRole().getId())) {
+            throw new DataNotFoundException("Role not found");
         }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 phoneNumber, password, existingUser.getAuthorities()
