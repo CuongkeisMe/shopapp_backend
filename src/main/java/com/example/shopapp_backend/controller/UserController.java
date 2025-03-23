@@ -1,6 +1,11 @@
 package com.example.shopapp_backend.controller;
 
+import com.example.shopapp_backend.response.LoginResponse;
+import com.example.shopapp_backend.response.RegisterResponse;
 import com.example.shopapp_backend.service.UserService;
+import com.example.shopapp_backend.component.LocalizationUtil;
+import com.example.shopapp_backend.util.MessageKey;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +25,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final LocalizationUtil localizationUtil;
 
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@Valid @RequestBody UserDTO userDTO, BindingResult result) {
@@ -32,22 +38,39 @@ public class UserController {
                 return ResponseEntity.badRequest().body(errorMessages);
             }
             if(!userDTO.getPass().equals(userDTO.getRetypePass())){
-                return ResponseEntity.badRequest().body("Password does not match");
+                return ResponseEntity.badRequest().body(
+                        RegisterResponse.builder()
+                                .message(localizationUtil.getLocalizedMessage(MessageKey.PASSWORD_NOT_MATCH))
+                        .build()
+                );
             }
             userService.createUser(userDTO);
-            return ResponseEntity.ok(userDTO);
+            return ResponseEntity.ok(
+                    RegisterResponse.builder()
+                            .message(localizationUtil.getLocalizedMessage(MessageKey.REGISTER_SUCCESSFULLY))
+                            .build()
+            );
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody UserLoginDTO userLoginDTO){
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletRequest request) {
         try {
             String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPass());
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok(
+                    LoginResponse.builder()
+                            .message(localizationUtil.getLocalizedMessage(MessageKey.LOGIN_SUCCESSFULLY))
+                            .token(token)
+                            .build()
+            );
         }catch (Exception e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.badRequest().body(
+                    LoginResponse.builder()
+                            .message(localizationUtil.getLocalizedMessage(MessageKey.LOGIN_FAILED, e.getMessage()))
+                            .build()
+            );
         }
     }
 }

@@ -18,6 +18,11 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  messages:
+    encoding: UTF-8
+    basename: i18n/messages
+    default-locale: en
+    fallback-to-system-locale: false
 api:
   prefix: api/v1
 jwt:
