@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -28,6 +29,7 @@ public class ProductService implements IProductService {
     private final ProductImageRepository productImageRepository;
 
     @Override
+    @Transactional
     public Product createProduct(ProductDTO productDTO) throws DataNotFoundException {
         Category existCategory = categoryRepository.findById(Long.valueOf(productDTO.getCategoryId()))
                 .orElseThrow(() -> new DataNotFoundException("Can not find category id with: " + productDTO.getCategoryId()));
@@ -48,14 +50,15 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
+    public Page<ProductResponse> getAllProducts(Long categoryId, String keyword, PageRequest pageRequest) {
         // Lay danh sach san pham theo trang(page) va limit(gioi han moi trang)
-        return productRepository
-                .findAll(pageRequest)
-                .map(ProductResponse::fromProduct);
+        Page<Product> productPage;
+        productPage = productRepository.searchProducts(categoryId, keyword, pageRequest);
+        return productPage.map(ProductResponse::fromProduct);
     }
 
     @Override
+    @Transactional
     public Product updateProduct(Long id, ProductDTO productDTO) throws Exception {
         Product existingProduct = getProductById(id);
         if (existingProduct != null) {
@@ -75,6 +78,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    @Transactional
     public void deleteProduct(Long id) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {

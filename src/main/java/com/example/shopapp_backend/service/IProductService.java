@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 public interface IProductService {
     Product createProduct(ProductDTO productDTO) throws DataNotFoundException;
     Product getProductById(Long id) throws Exception;
-    Page<ProductResponse> getAllProducts(PageRequest pageRequest);
+    Page<ProductResponse> getAllProducts(Long categoryId, String keyword, PageRequest pageRequest);
     Product updateProduct(Long id, ProductDTO productDTO) throws Exception;
     void deleteProduct(Long id);
     boolean existByName(String name);

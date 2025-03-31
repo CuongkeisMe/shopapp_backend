@@ -10,6 +10,7 @@ import com.example.shopapp_backend.repository.OrderRepository;
 import com.example.shopapp_backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class OrderDetailService implements IOrderDetailService {
     private final ProductRepository productRepository;
 
     @Override
+    @Transactional
     public OrderDetail createOrderDetail(OrderDetailDTO newOrderDetail) throws Exception {
         // Tim xem order id co ton tai kh
         Order oder = orderRepository.findById(newOrderDetail.getOrderId())
@@ -47,6 +49,7 @@ public class OrderDetailService implements IOrderDetailService {
     }
 
     @Override
+    @Transactional
     public OrderDetail updateOrderDetail(Long id, OrderDetailDTO orderDetailDTO) throws Exception {
         // tim xem order detail co ton tai kh
         OrderDetail existingOrderDetail = orderDetailRepository.findById(id)
@@ -65,6 +68,7 @@ public class OrderDetailService implements IOrderDetailService {
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         orderDetailRepository.deleteById(id);
     }

@@ -13,6 +13,7 @@ import com.example.shopapp_backend.util.MessageKey;
 import com.github.javafaker.Faker;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -44,11 +45,13 @@ public class ProductController {
 
     @GetMapping("")
     public ResponseEntity<ProductListResponse> getProduct(
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "0", name = "category_id") Long categoryId,
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
-        Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").ascending());
+        Page<ProductResponse> productPage = productService.getAllProducts(categoryId, keyword, pageRequest);
         int totalPages = productPage.getTotalPages();
         List<ProductResponse> products = productPage.getContent();
         return ResponseEntity.ok(ProductListResponse
@@ -110,9 +113,6 @@ public class ProductController {
             List<ProductImage> productImages = new ArrayList<>();
             // validate anh
             for (MultipartFile file : files) {
-                if(file.getSize() > 0){
-                    continue;
-                }
                 if (file.getSize() > 10 * 1024 * 1024) { // kich thuoc lon hon 10 mb
                     return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
                             .body(localizationUtil.getLocalizedMessage(MessageKey.UPLOAD_IMAGES_FILE_LARGE));
@@ -136,8 +136,28 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/images/{imageName}")
+    public ResponseEntity<?> viewImage(@PathVariable("imageName") String imageName) {
+        try {
+            Path imagePath = Paths.get("uploads/" + imageName);
+            UrlResource resource = new UrlResource(imagePath.toUri());
+            if(resource.exists()){
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(resource);
+            }else {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(new UrlResource(Paths.get("uploads/404.jpg").toUri().toString()));
+//                return ResponseEntity.notFound().build();
+            }
+        }catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     private String storeFile(MultipartFile file) throws IOException {
-        if(!isImageFile(file) || file.getOriginalFilename() != null){
+        if (!isImageFile(file) || file.getOriginalFilename() == null) {
             throw new IOException("Invalid image format");
         }
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
@@ -165,7 +185,7 @@ public class ProductController {
 //    @PostMapping("/generateFakeProducts")
     public ResponseEntity<String> generateFakeProducts() {
         Faker faker = new Faker();
-        for(int i = 0; i < 1000000; i++){
+        for(int i = 0; i < 200; i++){
             String productName = faker.commerce().productName();
             if(productService.existByName(productName)){
                 continue;

@@ -26,5 +26,5 @@ spring:
 api:
   prefix: api/v1
 jwt:
-  expiration: 86400 #1 day (tinh = s)
+  expiration: 2592000 #30 day (tinh = giay)
   secretKey: eGx1av2r69hfhOHhh+LJW4DquNFQzirhahwQWq0N+R4=
